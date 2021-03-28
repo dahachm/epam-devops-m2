@@ -254,7 +254,7 @@
     
   ***
    
-   Only owner and maintainer are allowew to delete protected branches (except default one - master) using WebUI:
+   Only owner and maintainer are allowed to delete protected branches (except default one - master) using WebUI:
 
    ![Screenshot_62](screenshots/Screenshot_62.png)
    ![Screenshot_63](screenshots/Screenshot_63.png)
