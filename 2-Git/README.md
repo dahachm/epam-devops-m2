@@ -262,15 +262,15 @@
 
    Let's test new access settings.
 
-   Attempting to push into *master* branch by *maintainer* (FAIL):
+   Try to push into *master* branch by *maintainer* (FAIL):
 
    ![Screenshot_65](screenshots/Screenshot_65.png)
 
-   Attempting to push into *feature-#23* (new "feature*" branch) by *developer* (SUCCESS):
+   Try to push into *feature-#23* (new "feature*" branch) by *developer* (SUCCESS):
 
    ![Screenshot_66](screenshots/Screenshot_66.png)
 
-   Attempting to merge *feature-#23* into *release* and push into remote *release* branch by *developer* (FAIL):
+   Try to merge *feature-#23* into *release* and push into remote *release* branch by *developer* (FAIL):
 
    ![Screenshot_67](screenshots/Screenshot_67.png)
 
