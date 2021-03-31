@@ -84,9 +84,8 @@ localhost:8042 - NodeManager WebUI
 
 Результаты:
 
-![Screenshot_1.png](screenshots/Screenshot_1.png)
-![Screenshot_2.png](screenshots/Screenshot_2.png)
-
+![Screenshot_1](https://user-images.githubusercontent.com/40645030/113220633-30fe9700-928c-11eb-82d5-9f7686b0cc9b.png)
+![Screenshot_2](https://user-images.githubusercontent.com/40645030/113220641-3360f100-928c-11eb-91a6-dc1e1d299cbb.png)
 
 ## Docker файл для сборки образа headnode
 см. [*headnode_dockerfile*](headnode_dockerfile)
