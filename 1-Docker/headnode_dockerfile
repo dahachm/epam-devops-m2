@@ -29,6 +29,10 @@ RUN chown root:hadoop $HADOOP_HOME && \
     chmod g+w $HADOOP_HOME && \
     chmod g+w $HADOOP_HOME/*
 
+COPY scripts/make-formatting.sh /usr/local/make-formatting.sh
+
+RUN /usr/local/make-formatting.sh
+
 EXPOSE 9870 9869 8088 8025 
 
 COPY scripts/start-headnode.sh /usr/local/start-headnode.sh
