@@ -12,9 +12,8 @@ RUN addgroup hadoop && \
     adduser -DG hadoop yarn && \
     adduser -DG hadoop hdfs
 
-RUN curl -O https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
-
-RUN tar -zxf hadoop-3.1.2.tar.gz -C /usr/local/ && rm hadoop-3.1.2.tar.gz
+RUN curl -O https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz && \
+    tar -zxf hadoop-3.1.2.tar.gz -C /usr/local/ && rm hadoop-3.1.2.tar.gz
 
 VOLUME /opt/datanode-dir
 VOLUME /opt/nodemanager-local-dir
