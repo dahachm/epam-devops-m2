@@ -45,10 +45,10 @@ docker-compose --version
 ````
 
 ## Docker файл для сборки образа headnode
-см. *headnode_dockerfile*
+см. [*headnode_dockerfile*](headnode_dockerfile)
 
 ## Docker файл для сборки образа worker
-см. *worker_dockerfile*
+см. [*worker_dockerfile*](worker_dockerfile)
 
 # Создание своей подсети
 
@@ -85,5 +85,5 @@ localhost:8042 - NodeManager WebUI
 
 Результаты:
 
-![Screenshot_1.png](/screenshots/Screenshot_1.png)
-![Screenshot_2.png](/screenshots/Screenshot_2.png)
+![Screenshot_1.png](screenshots/Screenshot_1.png)
+![Screenshot_2.png](screenshots/Screenshot_2.png)
