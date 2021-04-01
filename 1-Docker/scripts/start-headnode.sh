@@ -1,6 +1,3 @@
-#Set network configurations
-/usr/local/set-hosts-headnode.sh 
-
 #Start namenode
 sudo -u hdfs $HADOOP_HOME/bin/hdfs --daemon start namenode
 

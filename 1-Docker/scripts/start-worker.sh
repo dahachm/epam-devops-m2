@@ -1,6 +1,3 @@
-#Set network configurations
-/usr/local/set-hosts-worker.sh
-
 #Creating logs directory
 mkdir $HADOOP_HOME/logs
 chown hadoop:hadoop $HADOOP_HOME/logs
