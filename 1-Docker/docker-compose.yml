@@ -2,26 +2,18 @@ version: '3'
 
 services:
   headnode:
-    image: dahachm/hadoop:headnode
+    image: dahachm/hadoop-headnode:1.0
     ports:
       - 9870:9870 
-      - 9869:9869
       - 8088:8088
-      - 8025:8025
     volumes:
       - /opt/namenode-dir:/opt/namenode-dir
     tty: true
 
   worker:
-    image: dahachm/hadoop:worker
+    image: dahachm/hadoop-worker:1.0
     ports:
-      - 9864:9864
-      - 9865:9865
-      - 9866:9866
-      - 9867:9867
-      - 8040:8040
       - 8042:8042
-      - 8044:8044
     volumes:
       - /opt/datanode-dir:/opt/datanode-dir
       - /opt/nodemanager-local-dir:/opt/nodemanager-local-dir
