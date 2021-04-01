@@ -36,5 +36,6 @@ RUN /usr/local/make-formatting.sh
 EXPOSE 9870 9869 8088 8025 
 
 COPY scripts/start-headnode.sh /usr/local/start-headnode.sh
+COPY scripts/set-hosts-headnode.sh /usr/local/set-hosts-headnode.sh
 
 CMD /bin/bash /usr/local/start-headnode.sh || /bin/sh

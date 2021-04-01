@@ -1,5 +1,5 @@
 #Set network configurations
-echo "172.19.0.2      headnode" >> /etc/hosts
+/usr/local/set-hosts-worker.sh
 
 #Creating logs directory
 mkdir $HADOOP_HOME/logs

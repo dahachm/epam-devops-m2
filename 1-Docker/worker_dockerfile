@@ -34,5 +34,6 @@ RUN chown root:hadoop $HADOOP_HOME && \
 EXPOSE 9864 9865 9866 9867 8040 8042 8044 
 
 COPY scripts/start-worker.sh /usr/local/start-worker.sh
+COPY scripts/set-hosts-worker.sh /usr/local/set-hosts-worker.sh
 
 CMD /bin/bash /usr/local/start-worker.sh || /bin/sh
