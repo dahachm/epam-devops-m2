@@ -5,7 +5,7 @@
 Получение:
 
 ```
-$ docker pull dahachm/hadoop:headnode
+$ docker pull dahachm/hadoop-headnode:1.0
 ```
 
 **headnode** - главная нода HDFS-кластера, при старте контейнера запускаются NameNode(HDFS) и ResourceManager(YARN). 
@@ -15,12 +15,12 @@ $ docker pull dahachm/hadoop:headnode
 
 Запуск без указания парметров (docker сам все настроит вольюмы и сеть):
 ```
-$ docker run -tdP --name headnode dahachm/hadoop:headnode
+$ docker run -tdP --name headnode dahachm/hadoop-headnode:1.0
 ```
 
 С указанием дополнительных параметров:
 ```
-$ docker run -v /opt/namenode-dir:/opt/namenode-dir -p 8088:8088 -tdP --name headnode --network my-network --ip 172.19.0.2 --hostname headnode dahachm/hadoop:headnode
+$ docker run -v /opt/namenode-dir:/opt/namenode-dir -p 8088:8088 -tdP --name headnode dahachm/hadoop-headnode:1.0
 ```
 
   - **-v** - подключение вольюмов: 
@@ -36,18 +36,13 @@ $ docker run -v /opt/namenode-dir:/opt/namenode-dir -p 8088:8088 -tdP --name hea
       Если не указывать отдельно, куда перенаправлять трафик с некоторых портов (в данном случае для удобство отдельно указываем порт доступа к WebUI RewourceManager'а), то
       docker сам перенаправит порты, перечисленные в EXPOSE, на свободные в хостовой системе (при указании параметра **-P**). Посмотреть правила проброса портов запущенного
       контейнера можно с помощью команды `docker ps`.
-      
-  - **--netwrok** и  **--ip** - указываем созданную ранее собственную сеть и адрес, назначаемый контейнеру в этой сети
-      Если не указывать отдельно, docker добавит контейнер к дефолтную сеть и сам выделит ему адрес. Внутри контейнера зашит скрипт, который добавляет в /etc/hosts 
-      свой IP с указанием имени *headnode* и адрес, следующий от своего IP, с указаением имени *worker* (см. [set-hosts-headnode.sh](scrips/set-hosts-headnode.sh)).
-   
 
 # Worker
 
 Получение: 
 
 ```
-$ docker pull dahachm/hadoop:worker
+$ docker pull dahachm/hadoop-worker:1.0
 ```
 
 **worker** - первая (и единственная) slave-нода кластера, при старте контейнера запускаются DataNode (HDFS) и NodeManager (YARN).
@@ -56,12 +51,12 @@ $ docker pull dahachm/hadoop:worker
 
 Запуск без указания парметров:
 ```
-$ docker run -tdP --name worker dahachm/hadoop:worker
+$ docker run -tdP --name worker dahachm/hadoop-headnode:1.0
 ```
 
 Запуск с дополнительными параметрами:
 ```
-$ docker run -v /opt/nodemanager-log-dir:/opt/nodemanager-log-dir -p 8042:8042 -tdP --name worker --network my-network --ip 172.19.0.3 --hostname worker dahachm/hadoop:worker
+$ docker run -v /opt/nodemanager-log-dir:/opt/nodemanager-log-dir -p 8042:8042 -tdP --name worker dahachm/hadoop-headnode:1.0
 ```
 
 Описание и назначение параметров запуска **worker** почти совпадает с описанием выше, добавлю только следующее:
@@ -110,8 +105,11 @@ $ docker-compose -f focker-compose.yml up -d
 
 Результат сборки:
 
-![Screenshot_3](https://user-images.githubusercontent.com/40645030/113332443-d9af0400-9329-11eb-8527-a984966e1b4e.png)
-![Screenshot_4](https://user-images.githubusercontent.com/40645030/113332451-dca9f480-9329-11eb-9de3-9134c095bf32.png)
-![Screenshot_6](https://user-images.githubusercontent.com/40645030/113332464-df0c4e80-9329-11eb-8399-2de2221ce9ea.png)
+![Screenshot_3](https://user-images.githubusercontent.com/40645030/113363978-0af3f800-935b-11eb-8a43-8ba5805fb368.png)
+
+![Screenshot_4](https://user-images.githubusercontent.com/40645030/113363982-0deee880-935b-11eb-8d4e-219e35bce41e.png)
+
+![Screenshot_6](https://user-images.githubusercontent.com/40645030/113363991-10e9d900-935b-11eb-8fa8-81a94a12a86c.png)
+
 ![Screenshot_7](https://user-images.githubusercontent.com/40645030/113332471-e2073f00-9329-11eb-99eb-0da674078642.png)
 
