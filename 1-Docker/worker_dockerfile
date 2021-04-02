@@ -1,0 +1,38 @@
+FROM alpine:3.12
+
+RUN apk add \
+    openjdk8 \
+    openssh \
+    bash \
+    sudo \
+    curl 
+
+RUN addgroup hadoop && \
+    adduser -DG hadoop hadoop && \
+    adduser -DG hadoop yarn && \
+    adduser -DG hadoop hdfs
+
+RUN curl -O https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz && \
+    tar -zxf hadoop-3.1.2.tar.gz -C /usr/local/ && rm hadoop-3.1.2.tar.gz
+
+VOLUME /opt/datanode-dir
+VOLUME /opt/nodemanager-local-dir
+VOLUME /opt/nodemanager-log-dir
+
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk/jre
+ENV HADOOP_HOME /usr/local/hadoop-3.1.2
+
+COPY scripts/set-hadoop-conf.sh /usr/local/set-hadoop-conf.sh
+
+RUN /usr/local/set-hadoop-conf.sh
+
+RUN chown root:hadoop $HADOOP_HOME && \
+    chown root:hadoop $HADOOP_HOME/* && \
+    chmod 775 $HADOOP_HOME && \
+    chmod 775 $HADOOP_HOME/*
+
+EXPOSE 8042 
+
+COPY scripts/start-worker.sh /usr/local/start-worker.sh
+
+CMD /bin/bash /usr/local/start-worker.sh || /bin/sh
