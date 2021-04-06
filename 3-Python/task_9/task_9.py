@@ -73,7 +73,8 @@ class Docker:
                 remoteHost = 'http+unix://%2Fvar%2Frun%2Fdocker.sock'   # otherwise set to default     
         
         if remoteHost[:5] == 'unix:':           
-            remoteHost.replace('/', '%2F')
+            remoteHost = remoteHost.replace('/', '%2F')
+            remoteHost = remoteHost[:5] + '//' + remoteHost[5:]
             remoteHost = 'http+' + remoteHost       # make str suitable for `requests_unixsocket` class
 
         if remoteHost.find('unix') > 0:
@@ -201,7 +202,7 @@ class Docker:
             print('{:40} {:25} {:25} {:25} {:25}'.format(
                     REPOSITORY,  
                     TAG, 
-                    ID[ID.find(':'):12], 
+                    ID[ID.find(':')+1:ID.find(':')+12], 
                     CREATED, 
                     SIZE))
 
