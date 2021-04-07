@@ -5,20 +5,23 @@
 # Don't forget to add a check of the passed argument type.
 
 def printEven(numbers):
-
-    print('printEven:', end='\n\t')
-    unprocessed = 0
-    for i in numbers:
-        try:
-            if (i % 2 == 0):
-                print(i, end=' ')
-            if (i == 254):
-                print()
-                return
-        except:
-            unprocessed += 1
-    print(f'\n\t{unprocessed} value(s) couldn`t be processed due to type mismatch!\n')        
-    return        
+    try:
+        print('printEven:', end='\n\t')
+        unprocessed = 0
+        for i in numbers:
+            try:
+                if (i % 2 == 0):
+                    print(i, end=' ')
+                if (i == 254):
+                    print()
+                    return
+            except:
+                unprocessed += 1
+        print(f'\n\t{unprocessed} value(s) couldn`t be processed due to type mismatch!\n')        
+        return
+    except Exception() as er_msg:
+        print(er_msg)
+        exit()            
 
 def toList (input_str):
     input_list = input_str.split(' ')
@@ -26,7 +29,6 @@ def toList (input_str):
         try:
             input_list[i] = float(input_list[i])
         except:
-            print(input_list[i])
             continue
     return input_list        
 
