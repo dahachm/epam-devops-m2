@@ -34,30 +34,52 @@ def top3Max(list):
         print('\n')
         return topNum, extras     
 
-test_1 = [1, 10, 45, 3, 333]
-test_2 = [2, 10, '20']
-test_3 = ['200_', '300_', '63_']
-test_4 = 'str'
-test_5 = 5
+def toList (input_str):
+    input_list = input_str.split(' ')
+    for i in range(0, len(input_list)):
+        try:
+            input_list[i] = int(input_list[i])
+        except:
+            continue
+    return input_list        
 
-print('  --- TEST #1 --- ')
-print('Input: ' + str(test_1))
-top3Max(test_1)
 
-print('  --- TEST #2 --- ')
-print('Input: ' + str(test_2))
-top3Max(test_2)
+test = input('Type your list of space-separated integer or leave empty, if you want to run my tests: \n')
 
-print('  --- TEST #3 --- ')
-print('Input: ' + str(test_3))
-top3Max(test_3)
+if test == '':
+    test_1 = [1, 10, 45, 3, 333]
+    test_2 = [2, 10, '20']
+    test_3 = ['200_', '300_', '63_']
+    test_4 = 'str'
+    test_5 = 5
 
-print('  --- TEST #4 --- ')
-print('Input: ' + str(test_4))
-top3Max(test_4)
+    print('  --- TEST #1 --- ')
+    print('Input: ' + str(test_1))
+    top3Max(test_1)
 
-print('  --- TEST #5 --- ')
-print('Input: ' + str(test_5))
-top, extras = top3Max(test_5)
-print (top)
-print (extras)
+    print('  --- TEST #2 --- ')
+    print('Input: ' + str(test_2))
+    top3Max(test_2)
+
+    print('  --- TEST #3 --- ')
+    print('Input: ' + str(test_3))
+    top3Max(test_3)
+
+    print('  --- TEST #4 --- ')
+    print('Input: ' + str(test_4))
+    top3Max(test_4)
+
+    print('  --- TEST #5 --- ')
+    print('Input: ' + str(test_5))
+    top, extras = top3Max(test_5)
+    print (top)
+    print (extras)
+
+else:
+    test = toList(test)
+    print('\n    --- User test ---')
+    print('')
+    print('Input: ' + str(test))
+    top3Max(test)
+
+
