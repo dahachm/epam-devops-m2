@@ -21,9 +21,6 @@ while True:
     if secret in dictionary:
         print('Nice! Your secret matches.')
         exit()
-    elif secret in dictionary:
-        print('Nice! Your secret matches.')
-        exit()
     else:
         print('Bad secret, try again!')
 
