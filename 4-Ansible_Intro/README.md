@@ -68,67 +68,100 @@ VM3 - IP: 10.0.5.3
    [set-ssh.yml](set-ssh.yml):
    
    ```yml
-   - name: Custom
+  - name: Set SSH environment 
   hosts: moomin_hosts
 
   tasks:
-  - name: Update all packages on the systems
-    yum:
-        name: '*'
-        state: latest
+    - name: Create ~/.ssh dir
+      file:
+          path: /home/moomin/.ssh
+          state: directory
+   
+    - name: Create `authorized_keys` if absent
+      file:
+          path: /home/moomin/.ssh/authorized_keys
+          state: touch
 
-  - name: Add epel-release repo
-    yum: 
-        name: epel-release
-        state: present 
-
-  - name: Add MySQL repo
-    yum:
-        name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
-
-  - name: Install NTP, ngnix, MySQL
-    yum:
-        name: 
-          - ntp
-          - nginx
-          - mysql-server
-          - python3
-          - python-pip
-          - python-PyMySQL
-          - python3-PyMySQL
-        state: present
+- name: Set SSH keys to host-1
+  hosts: host-1
   
-  - name: Replaces NTP default config
-    copy:
-        src: ntp.conf
-        dest: /etc/ntp.conf
-        force: yes
+  tasks:
+    - name: Copy ssh private key to host-1
+      copy:
+          src: host-1_rsa
+          dest: /home/moomin/.ssh/id_rsa
+          owner: moomin
+          group: moomin
+          mode: 0600
 
-  - name: Start NTP
-    service:
-        name: ntpd
-        state: started
+- name: Copy SSH key to host-2
+  hosts: host-2
+  
+  tasks:
+    - name: Copy ssh private key to host-2
+      copy:
+          src: host-2_rsa
+          dest: /home/moomin/.ssh/id_rsa
+          owner: moomin
+          group: moomin
+          mode: 0600
+  
+- name: Copy SSH key to host-3
+  hosts: host-3
+  
+  tasks:
+    - name: Copy ssh private key to host-3
+      copy:
+          src: host-3_rsa
+          dest: /home/moomin/.ssh/id_rsa
+          owner: moomin
+          group: moomin
+          mode: 0600   
+        
+- name: Put PubKeys to hosts
+  hosts: moomin_hosts
+  tasks:
+    - name: add PubKey of host-1
+      lineinfile:
+          path: /home/moomin/.ssh/authorized_keys
+          line: "{{ pubkey1 }}"
+          state: present
 
-  - name: Start nginx
-    service:
-        name: nginx
-        state: started      
+    - name: add PubKey of host-2
+      lineinfile:
+          path: /home/moomin/.ssh/authorized_keys
+          line: "{{ pubkey2 }}"
+          state: present
 
-  - name: Start mysql
-    service:
-        name: mysqld
-        state: started
+    - name: add PubKey of host-3
+      lineinfile:
+          path: /home/moomin/.ssh/authorized_keys
+          line: "{{ pubkey3 }}"
+          state: present
 
-  - name: Create user in MySQL
-    mysql_user:
-        name: moomin
-        priv: '*.*:ALL'
-        state: present
+    - name: Set access privileges to authorezued_keys
+      file:
+          path: /home/moomin/.ssh/authorized_keys
+          owner: moomin
+          group: moomin
+          mode: 0644
+    
+    - name: Set access privileges to .ssh/
+      file:
+          path: /home/moomin/.ssh
+          owner: moomin
+          group: moomin
+          mode: 0744
 
-  - name: Create database in MySQL
-    mysql_db:
-        name: moomin_db
-        state: present
+- name: Set sudo for moomin user
+  hosts: moomin_hosts
+  
+  tasks:
+    - name: Add moomin group to sudoers
+      lineinfile:
+          path: /etc/sudoers
+          line: "moomin ALL=(ALL) NOPASSWD:ALL"
+          state: present
    ```
 
    3) Run [set-ssh.yml](set-ssh.yml) with created public keys as arguments:
