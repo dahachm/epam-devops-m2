@@ -212,67 +212,66 @@ VM3 - IP: 10.0.5.3
    
    ```yml
    - name: Custom
-     hosts: moomin_hosts
+  hosts: moomin_hosts
 
-     tasks:
-       - name: Update all packages on the systems
-         yum:
-          name: '*'
-          state: latest
+  tasks:
+  - name: Update all packages on the systems
+    yum:
+        name: '*'
+        state: latest
 
-      - name: Add epel-release repo
-        yum: 
-          name: epel-release
-          state: present 
+  - name: Add epel-release repo
+    yum: 
+        name: epel-release
+        state: present 
 
-      - name: Install NTP, ngnix, MySQL
-        yum:
-          name: 
-            - ntp
-            - nginx
-            - mysql-server
-            - python3
-            - python-pip
-            - python2-PyMySQL
-          state: present
+  - name: Add MySQL repo
+    yum:
+        name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+
+  - name: Install NTP, ngnix, MySQL
+    yum:
+        name: 
+          - ntp
+          - nginx
+          - mysql-server
+          - python3
+          - python-pip
+          - python-PyMySQL
+          - python3-PyMySQL
+        state: present
   
-      - name: Install PyMySql
-        pip:
-          name: PyMySql
-          state: present
-          executable: pip3
+  - name: Replaces NTP default config
+    copy:
+        src: ntp.conf
+        dest: /etc/ntp.conf
+        force: yes
 
-      - name: Replaces NTP default config
-        copy:
-          src: ntp.conf
-          dest: /etc/ntp.conf
-          force: yes
+  - name: Start NTP
+    service:
+        name: ntpd
+        state: started
 
-      - name: Start NTP
-        service:
-          name: ntpd
-          state: started
+  - name: Start nginx
+    service:
+        name: nginx
+        state: started      
 
-      - name: Start nginx
-        service:
-          name: nginx
-          state: started      
+  - name: Start mysql
+    service:
+        name: mysqld
+        state: started
 
-      - name: Start mysql
-        service:
-          name: mysqld
-          state: started
+  - name: Create user in MySQL
+    mysql_user:
+        name: moomin
+        priv: '*.*:ALL'
+        state: present
 
-      - name: Create user in MySQL
-        mysql_user:
-          name: moomin
-          priv: '*.*:ALL'
-          state: present
-
-      - name: Create database in MySQL
-        mysql_db:
-          name: moomin_db
-          state: present   
+  - name: Create database in MySQL
+    mysql_db:
+        name: moomin_db
+        state: present   
    ```
    
    Run playbook:
