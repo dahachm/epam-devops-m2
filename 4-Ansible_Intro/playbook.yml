@@ -12,6 +12,10 @@
         name: epel-release
         state: present 
 
+  - name: Add MySQL repo
+    yum:
+        name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+
   - name: Install NTP, ngnix, MySQL
     yum:
         name: 
@@ -20,15 +24,10 @@
           - mysql-server
           - python3
           - python-pip
-          - python2-PyMySQL
+          - python-PyMySQL
+          - python3-PyMySQL
         state: present
   
-  - name: Install PyMySql
-    pip:
-        name: PyMySql
-        state: present
-        executable: pip3
-
   - name: Replaces NTP default config
     copy:
         src: ntp.conf
@@ -59,4 +58,4 @@
   - name: Create database in MySQL
     mysql_db:
         name: moomin_db
-        state: present   
+        state: present
