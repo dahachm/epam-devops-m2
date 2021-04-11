@@ -68,109 +68,81 @@ VM3 - IP: 10.0.5.3
    [set-ssh.yml](set-ssh.yml):
    
    ```yml
-   - name: Set SSH environment 
-     hosts: moomin_hosts
+   - name: Custom
+  hosts: moomin_hosts
 
-     tasks:
-      - name: Create ~/.ssh dir
-        file:
-          path: /home/moomin/.ssh
-          state: directory
-   
-      - name: Create `authorized_keys` if absent
-        file:
-          path: /home/moomin/.ssh/authorized_keys
-          state: touch
+  tasks:
+  - name: Update all packages on the systems
+    yum:
+        name: '*'
+        state: latest
 
-  - name: Set SSH keys to host-1
-    hosts: host-1
+  - name: Add epel-release repo
+    yum: 
+        name: epel-release
+        state: present 
+
+  - name: Add MySQL repo
+    yum:
+        name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+
+  - name: Install NTP, ngnix, MySQL
+    yum:
+        name: 
+          - ntp
+          - nginx
+          - mysql-server
+          - python3
+          - python-pip
+          - python-PyMySQL
+          - python3-PyMySQL
+        state: present
   
-    tasks:
-      - name: Copy ssh private key to host-1
-        copy:
-          src: host-1_rsa
-          dest: /home/moomin/.ssh/id_rsa
-          owner: moomin
-          group: moomin
-          mode: 0600
+  - name: Replaces NTP default config
+    copy:
+        src: ntp.conf
+        dest: /etc/ntp.conf
+        force: yes
 
-  - name: Copy SSH key to host-2
-    hosts: host-2
-  
-    tasks:
-      - name: Copy ssh private key to host-2
-        copy:
-          src: host-2_rsa
-          dest: /home/moomin/.ssh/id_rsa
-          owner: moomin
-          group: moomin
-          mode: 0600
-  
-  - name: Copy SSH key to host-3
-    hosts: host-3
-  
-    tasks:
-      - name: Copy ssh private key to host-3
-        copy:
-          src: host-3_rsa
-          dest: /home/moomin/.ssh/id_rsa
-          owner: moomin
-          group: moomin
-          mode: 0600   
-        
-  - name: Put PubKeys to hosts
-    hosts: moomin_hosts
-    
-    tasks:
-      - name: add PubKey of host-1
-        lineinfile:
-          path: /home/moomin/.ssh/authorized_keys
-          line: "{{ pubkey1 }}"
-          state: present
+  - name: Start NTP
+    service:
+        name: ntpd
+        state: started
 
-      - name: add PubKey of host-2
-        lineinfile:
-          path: /home/moomin/.ssh/authorized_keys
-          line: "{{ pubkey2 }}"
-          state: present
+  - name: Start nginx
+    service:
+        name: nginx
+        state: started      
 
-      - name: add PubKey of host-3
-        lineinfile:
-          path: /home/moomin/.ssh/authorized_keys
-          line: "{{ pubkey3 }}"
-          state: present
+  - name: Start mysql
+    service:
+        name: mysqld
+        state: started
 
-      - name: Set access privileges to authorezued_keys
-        file:
-          path: /home/moomin/.ssh/authorized_keys
-          owner: moomin
-          group: moomin
-          mode: 0644
-    
-      - name: Set access privileges to .ssh/
-        file:
-          path: /home/moomin/.ssh
-          owner: moomin
-          group: moomin
-          mode: 0744
+  - name: Create user in MySQL
+    mysql_user:
+        name: moomin
+        priv: '*.*:ALL'
+        state: present
 
-  - name: Set sudo for moomin user
-    hosts: moomin_hosts
-  
-    tasks:
-      - name: Add moomin group to sudoers
-        lineinfile:
-          path: /etc/sudoers
-          line: "moomin ALL=(ALL) NOPASSWD:ALL"
-          state: present
+  - name: Create database in MySQL
+    mysql_db:
+        name: moomin_db
+        state: present
    ```
 
    3) Run [set-ssh.yml](set-ssh.yml) with created public keys as arguments:
 
-    ```
-    # ansible-playbook -i hosts.yml set-ssh.yml  -e "pubkey1='$(cat host-1_rsa.pub)' pubkey2='$(cat host-2_rsa.pub)' pubkey3='$(cat host-3_rsa.pub)'"
-    ```
-
+   ```
+   # ansible-playbook -i hosts.yml set-ssh.yml  -e "pubkey1='$(cat host-1_rsa.pub)' pubkey2='$(cat host-2_rsa.pub)' pubkey3='$(cat host-3_rsa.pub)'"
+   ```
+   
+   ***
+   In this playbook I use **MySQL 5.6** as it set *root* user password to '' (empty). 
+   
+   **MySQL 5.7** and **MySQL8.0** put root password in *.log* file so it requires additional steps to extract root password and create new user/db.
+   ***
+   
    4) The result:
 
    Ansible output:
@@ -324,6 +296,110 @@ VM3 - IP: 10.0.5.3
    ![Screenshot_13](https://user-images.githubusercontent.com/40645030/114203316-b6570b00-9960-11eb-8ca6-21933fa1019a.png)
    
    ![Screenshot_14](https://user-images.githubusercontent.com/40645030/114203331-bb1bbf00-9960-11eb-963c-d9f94cd3314f.png)
+
+# 4*. Setup nginx web-site
+   
+   This playbook setup nginx web server configuration and required sources for web site:
+      
+   - copy *web/* directory with recuired sources to hosts (*images/* directory and index.html)
+		
+   - copy and replace *nginx.conf* file
+		
+   - restart nginx
+		
+   - add firewall rule for port 8080/tcp
+   
+   - set required SELinux context to *web/* directory
+      
+   [*setup-nginx.conf*](setup-nginx.conf):
+   
+   ```yml
+   - name: Set up web-server sources
+  hosts: moomin_hosts
+
+  tasks:
+    - name: Create moomin dir
+      file:
+        name: /moomin
+        state: directory
+        mode: 0755
+
+    - name: Copy web sources  
+      copy:
+        src: web
+        dest: /moomin 
+        directory_mode: yes
+        mode: 0755
+
+    - name: Put nginx.conf
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+        force: yes
+
+- name: Put host-1 welcome page
+  hosts: host-1
+
+  tasks:
+    - name: Put host-1 welcome page
+      copy:
+          src: html/host-1-welcome-page.html
+          dest: /moomin/web/index.html
+
+- name: Put host-2 welcome page
+  hosts: host-2
+
+  tasks:
+    - name: Put host-2 welcome page
+      copy:
+          src: html/host-2-welcome-page.html
+          dest: /moomin/web/index.html
+
+- name: Put host-3 welcome page
+  hosts: host-3
+
+  tasks:
+    - name: Put host-3 welcome page
+      copy:
+          src: html/host-3-welcome-page.html
+          dest: /moomin/web/index.html
+
+- name:           
+  hosts: moomin_hosts
+
+  tasks:
+    - name: Check nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Stop nginx
+      service:
+        name: nginx
+        state: stopped
+
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started          
+
+    - name: Add firewall rule for port 8080/tcp
+      firewalld:
+        port: 8080/tcp
+        permanent: yes
+        state: enabled  
+
+    - name: Setup SELinux context for web/
+      command: chcon -Rv system_u:object_r:httpd_sys_content_t:s0 /moomin/web
+   ```
+   
+   **The result:**
+   
+   ![Screenshot_15](https://user-images.githubusercontent.com/40645030/114299007-c9352100-9ac1-11eb-8c12-6742333c98a3.png)
+   
+   ![Screenshot_16](https://user-images.githubusercontent.com/40645030/114299009-cdf9d500-9ac1-11eb-944b-b3cc079cdfb4.png)
+   
+   ![Screenshot_17](https://user-images.githubusercontent.com/40645030/114299012-d0f4c580-9ac1-11eb-9a62-457713eca045.png)
 
 
 
