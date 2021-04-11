@@ -1,0 +1,13 @@
+- name: Create web dir
+  file:
+    name: "/web"
+    state: directory
+    mode: 0755
+
+- name: Copy web-site sources  
+  copy:
+    src: "files/web"
+    dest: "/"
+    directory_mode: yes
+    mode: 0755          
+

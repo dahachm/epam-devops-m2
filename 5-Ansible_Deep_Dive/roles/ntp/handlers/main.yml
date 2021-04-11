@@ -1,0 +1,14 @@
+# handlers file for roles/ntp
+
+- name: Put .config
+  copy:
+    src: "files/{{ ntp_conf_file }}"
+    dest: "/etc/ntp.conf"
+    force: yes
+  when: ntp_conf_file is defined  
+
+- name: Start and enable ntpd
+  service:
+    name: ntpd
+    enabled: yes
+    state: started 

@@ -1,0 +1,3 @@
+user_name: moomin
+db_name: moomin_db 
+ntp_conf_file: ntp.conf

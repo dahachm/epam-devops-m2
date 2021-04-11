@@ -1,0 +1,35 @@
+# tasks file for roles/mysql
+
+- name: Add MySQL 5.6 repository
+  yum:
+    name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm 
+    state: present
+
+- name: Install Python packages
+  yum:
+    name:
+      - python3
+      - python-PyMySQL
+      - python3-PyMySQL
+    state: present
+
+- name: Install MySQL
+  yum:
+    name: 
+      - mysql
+      - mysql-server
+    state: present
+  notify:
+    - Start and enable MySQL
+
+- name: Create new user in MySQL
+  mysql_user:
+    name: "{{ user_name }}"
+    priv: '*.*:ALL'
+    state: present
+
+- name: Create database in MySQL
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present
+  when: db_name is defined  

@@ -1,0 +1,33 @@
+# handlers file for roles/user
+
+- name: Add new user to sudoers
+  lineinfile:
+        path: /etc/sudoers
+        line: "{{ new_user }} ALL=(ALL) NOPASSWD:ALL"
+        state: present
+
+- name: Set SSH
+  service:
+        name: sshd
+        state: started
+  notify:
+    - Create .ssh/
+    - Copy private keys
+    - Add authorized keys
+
+- name: Create .ssh/
+  file:
+    name: "/home/{{ new_user }}/.ssh"
+    state: directory
+
+- name: Copy private keys
+  copy:
+    src: "{{ private_key }}"
+    dest: "/home/{{ new_user }}/.ssh/id_rsa"
+    state: present
+
+- name: Add authorized keys
+  authorized_key:
+    name: "{{ new_user }}"
+    key: "{{ lookup('file', 'files/'+ item + '_rsa.pub') }}"
+  with_items: "{{ ansible_play_batch }}"   

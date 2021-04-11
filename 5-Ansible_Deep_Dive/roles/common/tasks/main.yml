@@ -1,0 +1,11 @@
+# tasks file for roles/common
+
+- name: Add epel-release repo
+  yum:
+    name: epel-release
+    state: latest 
+
+- name: Update all packages on the systems
+  yum:
+    name: '*'
+    state: latest
