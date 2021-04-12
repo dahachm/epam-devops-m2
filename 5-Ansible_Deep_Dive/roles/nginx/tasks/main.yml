@@ -24,8 +24,10 @@
 - name: Add http port to firewall rules
   firewalld:
      port: "{{ port_num }}/tcp"
-     permanent: yes
+     permanent: true
      state: enabled  
+  notify:
+     - Restart firewalld
 
 - name: Change SELinux context 
   command: "chcon -Rv system_u:object_r:httpd_sys_content_t:s0 /web"
