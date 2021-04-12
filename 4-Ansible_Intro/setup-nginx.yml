@@ -1,0 +1,77 @@
+- name: Set up web-server sources
+  hosts: moomin_hosts
+
+  tasks:
+    - name: Create moomin dir
+      file:
+        name: /moomin
+        state: directory
+        mode: 0755
+
+    - name: Copy web sources  
+      copy:
+        src: web
+        dest: /moomin 
+        directory_mode: yes
+        mode: 0755
+        
+    - name: Put nginx.conf
+      copy:
+        src: nginx.conf
+        dest: /etc/nginx/nginx.conf
+        force: yes
+
+- name: Put host-1 welcome page
+  hosts: host-1
+
+  tasks:
+    - name: Put host-1 welcome page
+      copy:
+          src: html/host-1-welcome-page.html
+          dest: /moomin/web/index.html
+
+- name: Put host-2 welcome page
+  hosts: host-2
+
+  tasks:
+    - name: Put host-2 welcome page
+      copy:
+          src: html/host-2-welcome-page.html
+          dest: /moomin/web/index.html
+
+- name: Put host-3 welcome page
+  hosts: host-3
+
+  tasks:
+    - name: Put host-3 welcome page
+      copy:
+          src: html/host-3-welcome-page.html
+          dest: /moomin/web/index.html
+
+- name:           
+  hosts: moomin_hosts
+
+  tasks:
+    - name: Check nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Stop nginx
+      service:
+        name: nginx
+        state: stopped
+
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started          
+
+    - name: Add firewall rule for port 8080/tcp
+      firewalld:
+        port: 8080/tcp
+        permanent: yes
+        state: enabled  
+    
+    - name: Setup SELinux context for web/
+      command: chcon -Rv system_u:object_r:httpd_sys_content_t:s0 /moomin/web
