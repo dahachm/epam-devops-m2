@@ -1,3 +1,0 @@
-# vars file for roles/mysql
-
-db_name: "{{user_name}}" + "_db"

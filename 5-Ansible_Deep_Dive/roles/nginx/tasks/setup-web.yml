@@ -9,5 +9,11 @@
     src: "files/web"
     dest: "/"
     directory_mode: yes
-    mode: 0755          
+    mode: 0755
+
+- name: Put index.html
+  template:
+     src: templates/index.html
+     dest: /web/index.html
+     mode: 0644
 
