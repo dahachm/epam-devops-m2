@@ -1,0 +1,3 @@
+# vars file for roles/ntp
+
+ntp_conf_file: ntp.conf

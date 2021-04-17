@@ -1,0 +1,15 @@
+# handlers file for roles/nginx
+
+- name: Enable nginx
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: Restart firewalld
+  service:
+    name: firewalld
+    state: restarted
+
+
+

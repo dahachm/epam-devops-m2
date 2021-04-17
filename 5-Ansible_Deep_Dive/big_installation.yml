@@ -1,0 +1,10 @@
+- name: Setup user configuration, Install ntp, nginx and mysql
+  hosts: moomin_hosts
+
+  roles:
+        - role: user
+        - role: common
+        - role: ntp
+        - role: mysql
+        - role: nginx
+        

@@ -1,0 +1,7 @@
+# handlers file for roles/mysql
+
+- name: Start and enable MySQL
+  service:
+    name: mysqld
+    enabled: yes
+    state: started

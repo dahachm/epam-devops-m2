@@ -1,0 +1,8 @@
+# handlers file for roles/user
+
+- name: Add new user to sudoers
+  lineinfile:
+        path: /etc/sudoers
+        line: "{{ new_user }} ALL=(ALL) NOPASSWD:ALL"
+        state: present
+

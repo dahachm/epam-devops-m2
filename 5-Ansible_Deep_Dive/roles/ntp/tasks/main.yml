@@ -1,0 +1,14 @@
+# tasks file for roles/ntp
+
+- name: Install ntp
+  yum:
+    name: ntp
+    state: present
+  notify:
+    - Put .config
+    - Start and enable ntpd
+
+- name: Start ntp
+  service:
+    name: ntpd
+    state: started
