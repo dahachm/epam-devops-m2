@@ -6,3 +6,7 @@
 1. Docker
 
 2. Git
+
+3. Python
+
+4. Ansible
